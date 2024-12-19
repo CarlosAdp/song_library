@@ -37,16 +37,16 @@ with sql.connect('spotify.sqlite') as cnx:
 if collected_at is None or datetime.now() - timedelta(days=7) > collected_at:
     logger.info('Collecting liked songs')
 
-saved_tracks = []
-next_offset = 0
-while True:
-    response = sp.current_user_saved_tracks(limit=50, offset=next_offset)
-    saved_tracks.extend(response['items'])
-    next_url = response['next']
-    if next_url is None:
-        break
+    saved_tracks = []
+    next_offset = 0
+    while True:
+        response = sp.current_user_saved_tracks(limit=50, offset=next_offset)
+        saved_tracks.extend(response['items'])
+        next_url = response['next']
+        if next_url is None:
+            break
 
-    next_offset = int(re.findall(r'offset=(\d+)', next_url)[0])
+        next_offset = int(re.findall(r'offset=(\d+)', next_url)[0])
 
 # %%
 saved_tracks_df_raw = pd.json_normalize(saved_tracks, sep='.')
