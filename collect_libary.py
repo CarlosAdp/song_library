@@ -73,17 +73,13 @@ saved_tracks_df['album_release_date'] = pd.to_datetime(
         else f'{d}-07-02' if re.match(r'^\d{4}$', d)
         else None
     )
-)
-
-# %%
+).dt.date
 
 with sql.connect('spotify.sqlite') as cnx:
     saved_tracks_df.to_sql(
-        'saved_tracks', cnx, if_exists='replace', index=True, dtype={
-            'collected': 'DATETIME',
-            'added_at': 'DATETIME'
-        })
+        'saved_tracks', cnx, if_exists='replace', index=True)
 
+# %%
 artists = pd.json_normalize(saved_tracks_df_raw['track.artists'].explode())\
     .drop_duplicates(subset=['id'])\
     .set_index('id')
